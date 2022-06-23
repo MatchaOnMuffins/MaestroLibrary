@@ -30,7 +30,6 @@ cmake can be installed with the following command:
 brew install cmake
 ```
 
-
 Once cmake is installed, you can build the library with the following commands:
 
 ```
@@ -41,7 +40,15 @@ make
 ```
 
 ### Pre-Built Binary
+
 Pre-built binaries are available for Windows and macOS.
 
-They are available from [here](https://www.youtube.com/watch?v=dQw4w9WgXcQ).
+They are available from [here](https://github.com/MatchaOnMuffins/MaestroLibrary/releases).
+
+## License
+
+This program is licensed under the MIT license.
+
+The license can be found [here](LICENSE).
+
 
