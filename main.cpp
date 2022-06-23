@@ -5,16 +5,14 @@
 
 using namespace std;
 
-void signalHandler(int signum);
-
 string serialPort;
 int channel1;
 int channel2;
 
 int main() {
-    signal(SIGINT, signalHandler);
     cout << "Welcome to MaestroControl!" << endl;
-    cout << "Please enter the serial port of your Maestro (this can be found by running 'ls /dev/cu.usbmodem* ' in the terminal): ";
+    cout
+            << "Please enter the serial port of your Maestro (this can be found by running 'ls /dev/cu.usbmodem* ' in the terminal): ";
     cin >> serialPort;
     cout << "Please enter the channel number for servo 1: ";
     cin >> channel1;
@@ -23,34 +21,42 @@ int main() {
     getchar();
     cout << "Please enter the delay between each move for servo 1 in seconds: (default is 0.1 seconds)";
     double delay1 = 0.1;
-    std::string input1;
-    std::getline(std::cin, input1);
+
+    string input1;
+    getline(cin, input1);
     if (!input1.empty()) {
-        std::istringstream stream(input1);
+        istringstream stream(input1);
         stream >> delay1;
     }
+    cout << "delay1" << delay1;
+
     cout << "Please enter the delay between each move for servo 2 in seconds: (default is 0.5 seconds)";
     double delay2 = 0.5;
-    std::string input2;
-    std::getline(std::cin, input2);
+
+    string input2;
+    getline(cin, input2);
     if (!input2.empty()) {
-        std::istringstream stream(input2);
+        istringstream stream(input2);
         stream >> delay2;
     }
+
     cout << "Please enter the number of steps for servo 1 to move: (default is 360 steps)";
+
     int steps1 = 360;
-    std::string input_step1;
-    std::getline(std::cin, input_step1);
-    if (!input2.empty()) {
-        std::istringstream stream(input_step1);
+    string input_step1;
+    getline(cin, input_step1);
+    if (!input_step1.empty()) {
+        istringstream stream(input_step1);
         stream >> steps1;
     }
+
     cout << "Please enter the number of steps for servo 2 to move: (default is 72 steps)";
+
     int steps2 = 72;
-    std::string input_step2;
-    std::getline(std::cin, input_step2);
-    if (!input2.empty()) {
-        std::istringstream stream(input_step2);
+    string input_step2;
+    getline(cin, input_step2);
+    if (!input_step2.empty()) {
+        istringstream stream(input_step2);
         stream >> steps2;
     }
     cout << "The current serial port is: " << serialPort << endl;
@@ -67,16 +73,3 @@ int main() {
     return 0;
 }
 
-void signalHandler(int signum) {
-    cout << endl;
-    cout << "Interrupt signal (" << signum << ") received.\n";
-    cout << "Current Servo Position: " << endl;
-    MaestroControl posGetter(serialPort.c_str());
-    cout << "Servo 1: " << posGetter.getPosition(channel1) << endl;
-    cout << "Servo 2: " << posGetter.getPosition(channel2) << endl;
-    cout << "Press any key to exit" << endl;
-    getchar();
-    cout << "Exiting..." << endl;
-    getchar();
-    exit(signum);
-}

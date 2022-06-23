@@ -1,7 +1,9 @@
 #ifndef MAESTROLIBRARY_LIBMAESTROCONTROL_H
 #define MAESTROLIBRARY_LIBMAESTROCONTROL_H
+
 #include <unistd.h>
 #include <string>
+
 /**
  * @class MaestroControl
  * @author MatchaOnMuffins
@@ -79,5 +81,10 @@ void
 servoControl(const char *dev, unsigned char servo1_channel, unsigned char servo2_channel, double delay1 = 0.1,
              int steps1 = 360,
              double delay2 = 0.5, int steps2 = 72);
+
+void signalHandler(int signum);
+
+void endProcess();
+
 
 #endif //MAESTROLIBRARY_LIBMAESTROCONTROL_H
