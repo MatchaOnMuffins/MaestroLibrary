@@ -14,7 +14,7 @@ int channel2;
 int main() {
     signal(SIGINT, signalHandler);
     cout << "Welcome to MaestroControl!" << endl;
-    cout << "Please enter the serial port of your Maestro: ";
+    cout << "Please enter the serial port of your Maestro (this can be found by running 'ls /dev/cu.usbmodem* ' in the terminal): ";
     cin >> serialPort;
     cout << "Please enter the channel number for servo 1: ";
     cin >> channel1;
