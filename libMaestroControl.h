@@ -64,4 +64,20 @@ public:
     ~MaestroControl();
 };
 
+/**
+ * @brief servoControl - This is the main function for the servoControl program.
+ * @param dev device name (e.g. /dev/ttyACM0)
+ * @param servo1_channel channel number for servo 1
+ * @param servo2_channel channel number for servo 2
+ * @param delay1 delay between each move for servo 1 in seconds
+ * @param delay2 delay between each move for servo 2 in seconds
+ * @param steps1 number of total steps for servo1 to move
+ * @param steps2 number of total steps for servo2 to move
+ */
+
+void
+servoControl(const char *dev, unsigned char servo1_channel, unsigned char servo2_channel, double delay1 = 0.1,
+             int steps1 = 360,
+             double delay2 = 0.5, int steps2 = 72);
+
 #endif //MAESTROLIBRARY_LIBMAESTROCONTROL_H
