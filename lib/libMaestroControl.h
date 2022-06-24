@@ -4,6 +4,18 @@
 #include <unistd.h>
 #include <string>
 
+#if defined(_WIN64)
+/* Microsoft Windows (64-bit). ------------------------------ */
+#define OS_WIN 1
+
+#elif defined(_WIN32)
+/* Microsoft Windows (32-bit). ------------------------------ */
+#define OS_WIN 1
+#else /* Unix */
+#define OS_WIN 0
+#endif
+
+
 /**
  * @class MaestroControl
  * @author MatchaOnMuffins
@@ -84,7 +96,7 @@ servoControl(const char *dev, unsigned char servo1_channel, unsigned char servo2
 
 void servoShift(const char *dev, unsigned char servo1_channel, unsigned char servo2_channel, double delay1 = 0.1,
                 int steps1 = 360,
-                double delay2 = 0.5, int steps2 = 72);
+                double delay2 = 0.5, int steps2 = 72, int range1 = 1000, int range2 = 1000);
 
 /**
  * @brief signal_handler - This is the signal handler for the servoControl program.

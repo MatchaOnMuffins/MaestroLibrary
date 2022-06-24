@@ -6,7 +6,7 @@
 #include <sstream>
 #include <unistd.h>
 #include <csignal>
-#include <iostream>
+
 
 using namespace std;
 
@@ -21,6 +21,7 @@ int pos_j = 4000;
 int pos_i = 4000;
 bool exits = false;
 bool force_exit = false;
+char *null = nullptr;
 
 MaestroControl::MaestroControl(const char *dev) {
     device = dev;
@@ -141,62 +142,210 @@ void servoControl(const char *dev, unsigned char servo1_channel, unsigned char s
 
 void servoShift(const char *dev, unsigned char servo1_channel, unsigned char servo2_channel, double delay1,
                 int steps1,
-                double delay2, int steps2) {
+                double delay2, int steps2, int range1, int range2) {
     signal(SIGINT, signalHandler);
     // 1000000 microseconds = 1 second
     int delay1_us = delay1 * 1000000; // delay between each step for servo 1 in microseconds
     int delay2_us = delay2 * 1000000; // delay between each step for servo 2 in microseconds
-    int delta_steps1 = 4000 / steps1; // change per step (servo1)
-    int delta_steps2 = 4000 / steps2; // change per step (servo2)
+    int delta_steps1 = range1 / steps1; // change per step (servo1)
+    int delta_steps2 = range2 / steps2; // change per step (servo2)
     // Create a new MaestroControl object
     MaestroControl control(dev);
     // Set the servo to the starting position
-    std::cout << "Initializing servos" << std::endl;
+    cout << endl;
+    cout << "********************************************************************************" << endl;
+    std::cout << "Initializing servos to center position\nPress any key to start";
+    getchar();
     sleep(1);
-    control.setPosition(servo1_channel, 4000);
-    control.setPosition(servo2_channel, 4000);
+    cout << endl;
+    control.setPosition(servo1_channel, 6000);
+    control.setPosition(servo2_channel, 6000);
+    cout << endl;
+    cout << "********************************************************************************" << endl;
+    std::cout << "Initialization complete\nPress any key to start micro shifting";
+    getchar();
     sleep(1);
     // Loop through the steps
-    std::cout << "Starting servo control" << std::endl;
-    for (int i = 1; i <= steps2; i += 2) {
+    cout << endl;
+    cout << "********************************************************************************" << endl;
+    std::cout << "Starting micro shift" << std::endl;
+    // Loop through the steps
+    int count = 0;
+    while (true) {
         if (exits) {
             break;
         }
-        for (int j = 1; j <= steps1; j++) {
+        cout << "Iteration " << count << endl;
+        for (int i = 6000; i < 6000 + range2; i += delta_steps2) {
             if (exits) {
                 break;
             }
-            pos_j = j * delta_steps1 + 4000;
-            control.setPosition(servo1_channel, pos_j);
-            usleep(delay1_us);
-        }
-        usleep(delay2_us);
-        pos_i = i * delta_steps2 + 4000;
-        control.setPosition(servo2_channel, pos_i);
-        usleep(delay2_us);
-        for (int k = steps1; k >= 0; k--) {
-            if (exits) {
-                break;
+            for (int j = 6000; j < 6000 + range1; j += delta_steps1) {
+                if (exits) {
+                    break;
+                }
+                pos_j = j;
+                control.setPosition(servo1_channel, pos_j);
+                usleep(delay1_us);
             }
-            pos_j = k * delta_steps1 + 4000; // changed pos_k to pos_j
-            control.setPosition(servo1_channel, pos_j);
-            usleep(delay1_us);
+            for (int j = 6000 + range1; j >= 6000; j -= delta_steps1) {
+                if (exits) {
+                    break;
+                }
+                pos_j = j;
+                control.setPosition(servo1_channel, pos_j);
+                usleep(delay1_us);
+            }
+            for (int j = 6000; j > 6000 - range1; j -= delta_steps1) {
+                if (exits) {
+                    break;
+                }
+                pos_j = j;
+                control.setPosition(servo1_channel, pos_j);
+                usleep(delay1_us);
+            }
+            for (int j = 6000 - range1; j <= 6000; j += delta_steps1) {
+                if (exits) {
+                    break;
+                }
+                pos_j = j;
+                control.setPosition(servo1_channel, pos_j);
+                usleep(delay1_us);
+            }
+            usleep(delay2_us);
+            pos_i = i;
+            control.setPosition(servo2_channel, pos_i);
+            usleep(delay2_us);
         }
-        usleep(delay2_us);
-        pos_i = (i + 1) * delta_steps2 + 4000;
-        control.setPosition(servo2_channel, pos_i);
-        usleep(delay2_us);
-    }
-    for (int j = 1; j <= steps1; j++) {
-        if (exits) {
-            break;
-        }
-        pos_j = j * delta_steps1 + 4000;
-        control.setPosition(servo1_channel, pos_j);
-        usleep(delay1_us);
-    }
 
-    endProcess();
+        for (int i = 6000 + range2; i > 6000; i -= delta_steps2) {
+            if (exits) {
+                break;
+            }
+            for (int j = 6000; j < 6000 + range1; j += delta_steps1) {
+                if (exits) {
+                    break;
+                }
+                pos_j = j;
+                control.setPosition(servo1_channel, pos_j);
+                usleep(delay1_us);
+            }
+            for (int j = 6000 + range1; j >= 6000; j -= delta_steps1) {
+                if (exits) {
+                    break;
+                }
+                pos_j = j;
+                control.setPosition(servo1_channel, pos_j);
+                usleep(delay1_us);
+            }
+            for (int j = 6000; j > 6000 - range1; j -= delta_steps1) {
+                if (exits) {
+                    break;
+                }
+                pos_j = j;
+                control.setPosition(servo1_channel, pos_j);
+                usleep(delay1_us);
+            }
+            for (int j = 6000 - range1; j <= 6000; j += delta_steps1) {
+                if (exits) {
+                    break;
+                }
+                pos_j = j;
+                control.setPosition(servo1_channel, pos_j);
+                usleep(delay1_us);
+            }
+            usleep(delay2_us);
+            pos_i = i;
+            control.setPosition(servo2_channel, pos_i);
+            usleep(delay2_us);
+        }
+
+        for (int i = 6000; i > 6000 - range2; i -= delta_steps2) {
+            if (exits) {
+                break;
+            }
+            for (int j = 6000; j < 6000 + range1; j += delta_steps1) {
+                if (exits) {
+                    break;
+                }
+                pos_j = j;
+                control.setPosition(servo1_channel, pos_j);
+                usleep(delay1_us);
+            }
+            for (int j = 6000 + range1; j >= 6000; j -= delta_steps1) {
+                if (exits) {
+                    break;
+                }
+                pos_j = j;
+                control.setPosition(servo1_channel, pos_j);
+                usleep(delay1_us);
+            }
+            for (int j = 6000; j > 6000 - range1; j -= delta_steps1) {
+                if (exits) {
+                    break;
+                }
+                pos_j = j;
+                control.setPosition(servo1_channel, pos_j);
+                usleep(delay1_us);
+            }
+            for (int j = 6000 - range1; j <= 6000; j += delta_steps1) {
+                if (exits) {
+                    break;
+                }
+                pos_j = j;
+                control.setPosition(servo1_channel, pos_j);
+                usleep(delay1_us);
+            }
+            usleep(delay2_us);
+            pos_i = i;
+            control.setPosition(servo2_channel, pos_i);
+            usleep(delay2_us);
+        }
+
+        for (int i = 6000 - range2; i < 6000; i += delta_steps2) {
+            if (exits) {
+                break;
+            }
+            for (int j = 6000; j < 6000 + range1; j += delta_steps1) {
+                if (exits) {
+                    break;
+                }
+                pos_j = j;
+                control.setPosition(servo1_channel, pos_j);
+                usleep(delay1_us);
+            }
+            for (int j = 6000 + range1; j >= 6000; j -= delta_steps1) {
+                if (exits) {
+                    break;
+                }
+                pos_j = j;
+                control.setPosition(servo1_channel, pos_j);
+                usleep(delay1_us);
+            }
+            for (int j = 6000; j > 6000 - range1; j -= delta_steps1) {
+                if (exits) {
+                    break;
+                }
+                pos_j = j;
+                control.setPosition(servo1_channel, pos_j);
+                usleep(delay1_us);
+            }
+            for (int j = 6000 - range1; j <= 6000; j += delta_steps1) {
+                if (exits) {
+                    break;
+                }
+                pos_j = j;
+                control.setPosition(servo1_channel, pos_j);
+                usleep(delay1_us);
+            }
+            usleep(delay2_us);
+            pos_i = i;
+            control.setPosition(servo2_channel, pos_i);
+            usleep(delay2_us);
+        }
+        count++;
+    }
+    // endProcess();
 
 
 }
@@ -209,18 +358,13 @@ void signalHandler(int signum) {
     std::cout << "Current Servo Position: " << std::endl;
     std::cout << "Position of Servo 1:" << pos_j << std::endl;
     std::cout << "Position of Servo 2:" << pos_i << std::endl;
-    std::cout << "Press any key to exit" << std::endl;
-    getchar();
-    std::cout << "Program will exit in 10 seconds" << std::endl;
-    for (int i = 0; i < 10; i++) {
-        std::cout << ".";
-        sleep(1);
+    std::cout << "Press any key to exit...";
+    if (OS_WIN) {
+        system("pause");
+    } else {
+        system("read -n 1");
     }
-    std::cout << std::endl;
-    std::cout << "Exiting..." << std::endl;
-    sleep(1);
-    getchar();
-    exit(signum);
+
 }
 
 
