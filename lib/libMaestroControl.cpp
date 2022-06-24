@@ -5,19 +5,21 @@
 #include <string>
 #include <sstream>
 #include <unistd.h>
+#include <csignal>
 #include <iostream>
 
 
 #ifdef _WIN32
 #define O_NOCTTY 0
 
-#include <Windows.h>
+#include <windows.h>
 
 #else
 #endif
 int pos_j = 4000;
 int pos_i = 4000;
 bool exits = false;
+bool force_exit = false;
 
 MaestroControl::MaestroControl(const char *dev) {
     device = dev;
@@ -94,11 +96,11 @@ void servoControl(const char *dev, unsigned char servo1_channel, unsigned char s
     sleep(1);
     // Loop through the steps
     std::cout << "Starting servo control" << std::endl;
-    for (int i = 0; i < (steps2 / 2); i += 2) {
+    for (int i = 1; i <= steps2; i += 2) {
         if (exits) {
             break;
         }
-        for (int j = 0; j < steps1; j++) {
+        for (int j = 1; j <= steps1; j++) {
             if (exits) {
                 break;
             }
@@ -106,10 +108,11 @@ void servoControl(const char *dev, unsigned char servo1_channel, unsigned char s
             control.setPosition(servo1_channel, pos_j);
             usleep(delay1_us);
         }
+        usleep(delay2_us);
         pos_i = i * delta_steps2 + 4000;
         control.setPosition(servo2_channel, pos_i);
         usleep(delay2_us);
-        for (int k = steps1; k > 0; k--) {
+        for (int k = steps1; k >= 0; k--) {
             if (exits) {
                 break;
             }
@@ -120,8 +123,9 @@ void servoControl(const char *dev, unsigned char servo1_channel, unsigned char s
         usleep(delay2_us);
         pos_i = (i + 1) * delta_steps2 + 4000;
         control.setPosition(servo2_channel, pos_i);
+        usleep(delay2_us);
     }
-    for (int j = 0; j < steps1; j++) {
+    for (int j = 1; j <= steps1; j++) {
         if (exits) {
             break;
         }
@@ -134,24 +138,34 @@ void servoControl(const char *dev, unsigned char servo1_channel, unsigned char s
 }
 
 void signalHandler(int signum) {
+    force_exit = true;
     exits = true;
     std::cout << std::endl;
     std::cout << "Interrupt signal (" << signum << ") received.\n";
     std::cout << "Current Servo Position: " << std::endl;
     std::cout << "Position of Servo 1:" << pos_j << std::endl;
     std::cout << "Position of Servo 2:" << pos_i << std::endl;
-    sleep(10);
     std::cout << "Press any key to exit" << std::endl;
     getchar();
+    std::cout << "Program will exit in 10 seconds" << std::endl;
+    for (int i = 0; i < 10; i++) {
+        std::cout << ".";
+        sleep(1);
+    }
+    std::cout << std::endl;
     std::cout << "Exiting..." << std::endl;
-    getchar();
+    sleep(1);
     getchar();
     exit(signum);
 }
 
 
 void endProcess() {
-    std::cout << "Process Ended" << std::endl;
-    sleep(20);
+    if (!force_exit) {
+        std::cout << "Process Ended" << std::endl;
+        sleep(20);
+    } else {
+        sleep(20);
+    }
 }
 

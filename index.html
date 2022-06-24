@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MaestroControl</title>
+
+    <style>
+        body {
+            background-color: #f5f5f5;
+        }
+
+        input {
+            border: none;
+            border-bottom: 2px solid #ccc;
+            background-color: #f5f5f5;
+            font-size: 1.5em;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 300;
+            color: #333;
+        }
+
+        select {
+            border: none;
+            border-bottom: 2px solid #ccc;
+            background-color: #f5f5f5;
+            font-size: 1.5em;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 300;
+            color: #333;
+        }
+
+        .control-label {
+            font-family: "Comic Sans MS", cursive, sans-serif;
+            font-size: 1.5em;
+            color: black;
+            cursor: default;
+        }
+    </style>
+</head>
+<body>
+<div style="text-align: left">
+    <form action="/" autocomplete="off">
+        <label class="control-label" for="port">Serial Port</label>
+        <br>
+        <br>
+        <select id="port" name="Serial Port">
+            <option value="COM1">COM1</option>
+            <option value="COM2">COM2</option>
+            <option value="COM3">COM3</option>
+            <option value="COM4">COM4</option>
+            <option value="COM5">COM5</option>
+            <option value="COM6">COM6</option>
+            <option value="COM7">COM7</option>
+            <option value="COM8">COM8</option>
+            <option value="COM9">COM9</option>
+            <option value="COM10">COM10</option>
+        </select>
+        <br>
+        <br>
+        <label class="control-label" for="channel1">Serial Port</label>
+        <br>
+        <br>
+        <input id="channel1" max="23" min="0" name="channel1" placeholder="0" type="number" value="0">
+        <br>
+        <br>
+        <label class="control-label" for="channel2">Serial Port2</label>
+        <br>
+        <br>
+        <input id="channel2" max="23" min="0" name="channel2 " placeholder="5" type="number" value="5">
+        <br>
+        <br>
+        <label class="control-label" for="delay1">Servo 1 Delay time</label>
+        <br>
+        <br>
+        <input id="delay1" max="0.5" min="0" name="delay1" placeholder="0.1" step="0.05" type="number" value="0.1">
+        <br>
+        <br>
+        <label class="control-label" for="delay2">Servo 1 Delay time</label>
+        <br>
+        <br>
+        <input id="delay2" max="0.5" min="0" name="delay2" placeholder="0.5" step="0.1" type="number" value="0.5">
+        <br>
+        <br>
+        <label class="control-label" for="steps1">Servo 1 total step count</label>
+        <br>
+        <br>
+        <input id="steps1" max="720" min="10" name="steps1" placeholder="360" step="10" type="number" value="20">
+        <br>
+        <br>
+        <label class="control-label" for="steps2">Servo 2 total step count</label>
+        <br>
+        <br>
+        <input id="steps2" max="100" min="10" name="steps2" placeholder="70" step="5" type="number" value="20">
+        <br>
+        <br>
+        <input type="submit" value="Submit">
+    </form>
+</div>
+</body>
+</html>
