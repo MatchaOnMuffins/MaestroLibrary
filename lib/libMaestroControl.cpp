@@ -8,6 +8,7 @@
 #include <csignal>
 #include <iostream>
 
+using namespace std;
 
 #ifdef _WIN32
 #define O_NOCTTY 0
@@ -137,6 +138,69 @@ void servoControl(const char *dev, unsigned char servo1_channel, unsigned char s
     endProcess();
 }
 
+
+void servoShift(const char *dev, unsigned char servo1_channel, unsigned char servo2_channel, double delay1,
+                int steps1,
+                double delay2, int steps2) {
+    signal(SIGINT, signalHandler);
+    // 1000000 microseconds = 1 second
+    int delay1_us = delay1 * 1000000; // delay between each step for servo 1 in microseconds
+    int delay2_us = delay2 * 1000000; // delay between each step for servo 2 in microseconds
+    int delta_steps1 = 4000 / steps1; // change per step (servo1)
+    int delta_steps2 = 4000 / steps2; // change per step (servo2)
+    // Create a new MaestroControl object
+    MaestroControl control(dev);
+    // Set the servo to the starting position
+    std::cout << "Initializing servos" << std::endl;
+    sleep(1);
+    control.setPosition(servo1_channel, 4000);
+    control.setPosition(servo2_channel, 4000);
+    sleep(1);
+    // Loop through the steps
+    std::cout << "Starting servo control" << std::endl;
+    for (int i = 1; i <= steps2; i += 2) {
+        if (exits) {
+            break;
+        }
+        for (int j = 1; j <= steps1; j++) {
+            if (exits) {
+                break;
+            }
+            pos_j = j * delta_steps1 + 4000;
+            control.setPosition(servo1_channel, pos_j);
+            usleep(delay1_us);
+        }
+        usleep(delay2_us);
+        pos_i = i * delta_steps2 + 4000;
+        control.setPosition(servo2_channel, pos_i);
+        usleep(delay2_us);
+        for (int k = steps1; k >= 0; k--) {
+            if (exits) {
+                break;
+            }
+            pos_j = k * delta_steps1 + 4000; // changed pos_k to pos_j
+            control.setPosition(servo1_channel, pos_j);
+            usleep(delay1_us);
+        }
+        usleep(delay2_us);
+        pos_i = (i + 1) * delta_steps2 + 4000;
+        control.setPosition(servo2_channel, pos_i);
+        usleep(delay2_us);
+    }
+    for (int j = 1; j <= steps1; j++) {
+        if (exits) {
+            break;
+        }
+        pos_j = j * delta_steps1 + 4000;
+        control.setPosition(servo1_channel, pos_j);
+        usleep(delay1_us);
+    }
+
+    endProcess();
+
+
+}
+
 void signalHandler(int signum) {
     force_exit = true;
     exits = true;
@@ -167,5 +231,10 @@ void endProcess() {
     } else {
         sleep(20);
     }
+}
+
+
+void print(const string &s) {
+    cout << s << endl;
 }
 

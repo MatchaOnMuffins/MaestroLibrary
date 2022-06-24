@@ -82,9 +82,27 @@ servoControl(const char *dev, unsigned char servo1_channel, unsigned char servo2
              int steps1 = 360,
              double delay2 = 0.5, int steps2 = 72);
 
+void servoShift(const char *dev, unsigned char servo1_channel, unsigned char servo2_channel, double delay1 = 0.1,
+                int steps1 = 360,
+                double delay2 = 0.5, int steps2 = 72);
+
+/**
+ * @brief signal_handler - This is the signal handler for the servoControl program.
+ * @param signum
+ */
 void signalHandler(int signum);
 
+/**
+ * @brief endProcess - This is called when the program is exiting.
+ */
+
 void endProcess();
+
+/**
+ * @brief print - This is a helper function for the servoControl program.
+ */
+
+void print(const std::string &s);
 
 
 #endif //MAESTROLIBRARY_LIBMAESTROCONTROL_H
