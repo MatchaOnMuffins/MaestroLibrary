@@ -135,9 +135,9 @@ void shiftPrompt() {
 
 int main() {
     cout << "Welcome to MaestroControl!" << endl;
-    cout << "Which method would you like to use?" << endl;
     cout << "1. Servo Control" << endl;
     cout << "2. Servo Shift" << endl;
+    cout << "Which method would you like to use? (1 or 2): ";
     int choice;
     cin >> choice;
     if (choice == 1) {
